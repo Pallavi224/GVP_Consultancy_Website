@@ -1,50 +1,66 @@
 from flask import Flask, render_template, request
-
+import os
 import sqlite3
-
-
+import psycopg2
+from urllib.parse import urlparse
 
 app = Flask(__name__)
 
+# Detect database type
+DATABASE_URL = os.environ.get('DATABASE_URL')
+USE_POSTGRESQL = DATABASE_URL is not None
 
-
-# Create database
+def get_db_connection():
+    """Get database connection based on environment"""
+    if USE_POSTGRESQL:
+        # Parse PostgreSQL URL
+        parsed = urlparse(DATABASE_URL)
+        conn = psycopg2.connect(
+            host=parsed.hostname,
+            port=parsed.port or 5432,
+            database=parsed.path[1:],  # Remove leading slash
+            user=parsed.username,
+            password=parsed.password
+        )
+        return conn
+    else:
+        # Use SQLite locally
+        return sqlite3.connect('students.db')
 
 def init_db():
+    """Initialize database tables"""
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
 
-    conn = sqlite3.connect('students.db')
+        if USE_POSTGRESQL:
+            cur.execute('''
+                CREATE TABLE IF NOT EXISTS students (
+                    id SERIAL PRIMARY KEY,
+                    name TEXT,
+                    mobile TEXT,
+                    email TEXT,
+                    course TEXT,
+                    city TEXT
+                )
+            ''')
+        else:
+            cur.execute('''
+                CREATE TABLE IF NOT EXISTS students (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT,
+                    mobile TEXT,
+                    email TEXT,
+                    course TEXT,
+                    city TEXT
+                )
+            ''')
 
-    cur = conn.cursor()
-
-
-
-    cur.execute('''
-
-        CREATE TABLE IF NOT EXISTS students (
-
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-            name TEXT,
-
-            mobile TEXT,
-
-            email TEXT,
-
-            course TEXT,
-
-            city TEXT
-
-        )
-
-    ''')
-
-
-
-    conn.commit()
-
-    conn.close()
-
-
+        conn.commit()
+        conn.close()
+        print(f"Database initialized ({'PostgreSQL' if USE_POSTGRESQL else 'SQLite'})")
+    except Exception as e:
+        print(f"Database initialization error: {e}")
 
 init_db()
 
@@ -55,14 +71,6 @@ init_db()
 def home():
 
     return render_template('home.html')
-
-
-
-@app.route('/courses')
-
-def courses():
-
-    return render_template('courses.html')
 
 
 
@@ -88,23 +96,22 @@ def contact():
 
 
 
-        conn = sqlite3.connect('students.db')
+        conn = get_db_connection()
 
         cur = conn.cursor()
 
-
-
-        cur.execute('''
-
-            INSERT INTO students
-
-            (name, mobile, email, course, city)
-
-            VALUES (?, ?, ?, ?, ?)
-
-        ''', (name, mobile, email, course, city))
-
-
+        if USE_POSTGRESQL:
+            cur.execute('''
+                INSERT INTO students
+                (name, mobile, email, course, city)
+                VALUES (%s, %s, %s, %s, %s)
+            ''', (name, mobile, email, course, city))
+        else:
+            cur.execute('''
+                INSERT INTO students
+                (name, mobile, email, course, city)
+                VALUES (?, ?, ?, ?, ?)
+            ''', (name, mobile, email, course, city))
 
         conn.commit()
 
