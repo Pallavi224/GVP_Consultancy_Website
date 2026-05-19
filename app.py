@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request
-from pyngrok import ngrok
 
 import sqlite3
 
@@ -122,13 +121,4 @@ def contact():
 
 
 if __name__ == '__main__':
-
-    print("Local URL: http://127.0.0.1:5000")
-    try:
-        public_url = ngrok.connect(5000, "http").public_url
-        print(f"ngrok tunnel available at: {public_url}")
-    except Exception as e:
-        print("Warning: ngrok tunnel could not be started.", e)
-        print("If ngrok is unavailable, open http://127.0.0.1:5000 locally instead.")
-
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', debug=False)
