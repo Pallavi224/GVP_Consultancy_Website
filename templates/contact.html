@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+
+
+<meta charset="UTF-8">
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<title>Contact Us</title>
+
+
+
+<link rel="stylesheet"
+
+href="{{ url_for('static', filename='style.css') }}">
+
+
+
+</head>
+
+
+
+<body class="contact-page">
+
+
+
+<header>
+
+
+
+<div class="navbar">
+
+
+
+<div class="logo-section">
+
+
+
+<img src="{{ url_for('static', filename='logo.png') }}" class="logo">
+
+
+
+<h2>GVP Consultancy</h2>
+
+
+
+</div>
+
+
+
+<nav>
+
+<a href="/">Home</a>
+
+<a href="/courses">Courses</a>
+
+<a href="/contact">Contact Us</a>
+
+</nav>
+
+
+
+</div>
+
+
+
+</header>
+
+
+
+<section class="form-section">
+
+
+
+<div class="form-container">
+
+
+
+<h1>Student Registration Form</h1>
+
+
+
+<form method="POST">
+
+
+
+<input type="text"
+
+name="name"
+
+placeholder="Enter Full Name"
+
+required>
+
+
+
+<input type="text"
+
+name="mobile"
+
+placeholder="Mobile Number"
+
+required>
+
+
+
+<input type="email"
+
+name="email"
+
+placeholder="Email Address"
+
+required>
+
+
+
+<input type="text"
+
+name="course"
+
+placeholder="Interested Course"
+
+required>
+
+
+
+<input type="text"
+
+name="city"
+
+placeholder="City"
+
+required>
+
+
+
+<button type="submit">
+
+Register Now
+
+</button>
+
+
+
+</form>
+
+
+
+<h2>📞 9060168350</h2>
+
+
+
+</div>
+
+
+
+</section>
+
+
+
+</body>
+
+</html>
